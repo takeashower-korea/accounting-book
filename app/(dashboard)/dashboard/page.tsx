@@ -15,9 +15,10 @@ export default function DashboardPage() {
   const fetchData = async () => {
     const now = new Date()
     const year = now.getFullYear()
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const from = `${year}-${month}-01`
-    const to = `${year}-${month}-31`
+    const month = now.getMonth() + 1
+    const from = `${year}-${String(month).padStart(2, '0')}-01`
+    const lastDay = new Date(year, month, 0).getDate()
+    const to = `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
 
     const { data: sales } = await supabase
       .from('sales')
@@ -41,7 +42,6 @@ export default function DashboardPage() {
   }
 
   const formatNumber = (n: number) => n.toLocaleString('ko-KR')
-
   const now = new Date()
   const monthLabel = `${now.getFullYear()}년 ${now.getMonth() + 1}월`
 
@@ -53,16 +53,12 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500 mb-1">이번 달 매출</p>
-          <p className="text-3xl font-bold text-gray-800">
-            {formatNumber(totalSales)}원
-          </p>
+          <p className="text-3xl font-bold text-gray-800">{formatNumber(totalSales)}원</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500 mb-1">이번 달 비용</p>
-          <p className="text-3xl font-bold text-gray-800">
-            {formatNumber(totalExpenses)}원
-          </p>
+          <p className="text-3xl font-bold text-gray-800">{formatNumber(totalExpenses)}원</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
