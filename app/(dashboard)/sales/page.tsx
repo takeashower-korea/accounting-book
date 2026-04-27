@@ -38,14 +38,19 @@ export default function SalesPage() {
   }, [selectedMonth])
 
   const fetchList = async () => {
-    const from = `${selectedMonth}-01`
-    const to = `${selectedMonth}-31`
-    const { data } = await supabase
+    const [year, month] = selectedMonth.split('-')
+    const from = `${year}-${month}-01`
+    const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate()
+    const to = `${year}-${month}-${String(lastDay).padStart(2, '0')}`
+
+    const { data, error } = await supabase
       .from('sales')
       .select('*')
       .gte('date', from)
       .lte('date', to)
       .order('date', { ascending: false })
+
+    if (error) console.log('매출 조회 에러:', error)
     setList(data || [])
   }
 
@@ -102,9 +107,7 @@ export default function SalesPage() {
   }
 
   const formatNumber = (n: number) => n?.toLocaleString('ko-KR')
-
   const totalAmount = list.reduce((sum, item) => sum + (item.amount || 0), 0)
-
   const channelSummary = list.reduce((acc: any, item) => {
     const ch = item.channel || '기타'
     acc[ch] = (acc[ch] || 0) + (item.amount || 0)
@@ -115,7 +118,6 @@ export default function SalesPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">매출 입력</h1>
 
-      {/* 입력 폼 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           {editId ? '✏️ 매출 수정' : '새 매출 입력'}
@@ -208,7 +210,6 @@ export default function SalesPage() {
         </div>
       </div>
 
-      {/* 월별 필터 + 요약 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-700">📅 월별 조회</h2>
@@ -234,7 +235,6 @@ export default function SalesPage() {
           </div>
         </div>
 
-        {/* 채널별 요약 */}
         {Object.keys(channelSummary).length > 0 && (
           <div>
             <p className="text-sm font-medium text-gray-600 mb-2">채널별 매출</p>
@@ -249,7 +249,6 @@ export default function SalesPage() {
         )}
       </div>
 
-      {/* 목록 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">매출 내역</h2>
         <div className="overflow-x-auto">

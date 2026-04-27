@@ -22,10 +22,11 @@ export default function PartnersPage() {
   }, [])
 
   const fetchList = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('partners')
       .select('*')
       .order('created_at', { ascending: false })
+    if (error) console.log('거래처 조회 에러:', error)
     setList(data || [])
   }
 
@@ -90,7 +91,6 @@ export default function PartnersPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">거래처 관리</h1>
 
-      {/* 입력 폼 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           {editId ? '✏️ 거래처 수정' : '새 거래처 등록'}
@@ -169,7 +169,6 @@ export default function PartnersPage() {
         </div>
       </div>
 
-      {/* 요약 */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500 mb-1">전체 거래처</p>
@@ -189,7 +188,6 @@ export default function PartnersPage() {
         </div>
       </div>
 
-      {/* 목록 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-4 gap-4">
           <h2 className="text-lg font-semibold text-gray-700">거래처 목록</h2>

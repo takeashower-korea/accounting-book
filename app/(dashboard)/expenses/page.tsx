@@ -42,14 +42,19 @@ export default function ExpensesPage() {
   }, [selectedMonth])
 
   const fetchList = async () => {
-    const from = `${selectedMonth}-01`
-    const to = `${selectedMonth}-31`
-    const { data } = await supabase
+    const [year, month] = selectedMonth.split('-')
+    const from = `${year}-${month}-01`
+    const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate()
+    const to = `${year}-${month}-${String(lastDay).padStart(2, '0')}`
+
+    const { data, error } = await supabase
       .from('expenses')
       .select('*')
       .gte('date', from)
       .lte('date', to)
       .order('date', { ascending: false })
+
+    if (error) console.log('비용 조회 에러:', error)
     setList(data || [])
   }
 
@@ -121,7 +126,6 @@ export default function ExpensesPage() {
   const formatNumber = (n: number) => n?.toLocaleString('ko-KR')
   const selectedGroup = categoryGroups.find(g => g.group === form.category)
   const totalAmount = list.reduce((sum, item) => sum + (item.amount || 0), 0)
-
   const categorySummary = list.reduce((acc: any, item) => {
     const cat = item.category || '기타'
     acc[cat] = (acc[cat] || 0) + (item.amount || 0)
@@ -132,7 +136,6 @@ export default function ExpensesPage() {
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">비용 입력</h1>
 
-      {/* 입력 폼 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           {editId ? '✏️ 비용 수정' : '새 비용 입력'}
@@ -284,7 +287,6 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      {/* 월별 필터 + 요약 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-700">📅 월별 조회</h2>
@@ -324,7 +326,6 @@ export default function ExpensesPage() {
         )}
       </div>
 
-      {/* 목록 */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">비용 내역</h2>
         <div className="overflow-x-auto">
