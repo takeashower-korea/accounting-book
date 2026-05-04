@@ -22,7 +22,7 @@ const expenseTypes = ['고정', '변동']
 const emptyForm = {
   date: '', is_confirmed: true, expense_type: '', category: '',
   sub_category: '', vendor: '', agency: '', amount: '',
-  payment_method: '', bank_name: '', account_number: '',
+  payment_method: '', bank_name: '', account_number: '', account_holder: '',
   transfer_date: '', receipt_type: '', is_processed: false, memo: '',
 }
 
@@ -99,7 +99,8 @@ export default function ExpensesPage() {
       sub_category: item.sub_category || '', vendor: item.vendor || '',
       agency: item.agency || '', amount: item.amount?.toString() || '',
       payment_method: item.payment_method || '', bank_name: item.bank_name || '',
-      account_number: item.account_number || '', transfer_date: item.transfer_date || '',
+      account_number: item.account_number || '', account_holder: item.account_holder || '',
+      transfer_date: item.transfer_date || '',
       receipt_type: item.receipt_type || '', is_processed: item.is_processed || false,
       memo: item.memo || '',
     })
@@ -126,6 +127,8 @@ export default function ExpensesPage() {
   const formatNumber = (n: number) => n?.toLocaleString('ko-KR')
   const selectedGroup = categoryGroups.find(g => g.group === form.category)
   const totalAmount = list.reduce((sum, item) => sum + (item.amount || 0), 0)
+  const isAccountTransfer = form.payment_method === '계좌이체'
+
   const categorySummary = list.reduce((acc: any, item) => {
     const cat = item.category || '기타'
     acc[cat] = (acc[cat] || 0) + (item.amount || 0)
@@ -229,26 +232,37 @@ export default function ExpensesPage() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">은행명</label>
-            <input type="text" name="bank_name" value={form.bank_name} onChange={handleChange}
-              placeholder="은행명 입력"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
-          </div>
+          {isAccountTransfer && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">은행명</label>
+                <input type="text" name="bank_name" value={form.bank_name} onChange={handleChange}
+                  placeholder="은행명 입력"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">계좌번호</label>
-            <input type="text" name="account_number" value={form.account_number} onChange={handleChange}
-              placeholder="계좌번호 입력"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">계좌번호</label>
+                <input type="text" name="account_number" value={form.account_number} onChange={handleChange}
+                  placeholder="계좌번호 입력"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">이체일</label>
-            <input type="text" name="transfer_date" value={form.transfer_date} onChange={handleChange}
-              placeholder="예: 매월 10일"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">예금주명</label>
+                <input type="text" name="account_holder" value={form.account_holder} onChange={handleChange}
+                  placeholder="예금주명 입력"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">이체일</label>
+                <input type="text" name="transfer_date" value={form.transfer_date} onChange={handleChange}
+                  placeholder="예: 매월 10일"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400" />
+              </div>
+            </>
+          )}
 
           <div className="flex items-center gap-3 mt-4">
             <input type="checkbox" name="is_processed" checked={form.is_processed}
