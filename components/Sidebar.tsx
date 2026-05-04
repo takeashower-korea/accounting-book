@@ -11,6 +11,7 @@ const menus = [
   { href: '/partners', label: '🏢 거래처 관리', external: false },
   { href: '/inventory', label: '📦 배송/재고 관리', external: false },
   { href: '/tax', label: '📋 세무사 자료', external: false },
+  { href: '/history', label: '📂 히스토리', external: false },
   { href: '/settings', label: '⚙️ 설정', external: false },
 ]
 
