@@ -12,6 +12,7 @@ const menus = [
   { href: '/inventory', label: '📦 배송/재고 관리', external: false },
   { href: '/tax', label: '📋 세무사 자료', external: false },
   { href: '/history', label: '📂 히스토리', external: false },
+  { href: '/subscriptions', label: '🔄 정기결제 관리', external: false },
   { href: '/settings', label: '⚙️ 설정', external: false },
 ]
 
@@ -25,13 +26,13 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="w-60 min-h-screen bg-gray-900 text-white flex flex-col">
-      <div className="p-6 border-b border-gray-700">
-        <h1 className="text-lg font-bold">테이크어샤워</h1>
-        <p className="text-xs text-gray-400 mt-1">회계장부 시스템</p>
+    <div style={{ width: '240px', minHeight: '100vh', backgroundColor: '#111827', color: 'white', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '24px', borderBottom: '1px solid #374151' }}>
+        <h1 style={{ fontSize: '18px', fontWeight: 'bold' }}>테이크어샤워</h1>
+        <p style={{ fontSize: '12px', color: '#9CA3AF', marginTop: '4px' }}>회계장부 시스템</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {menus.map((menu) => (
           menu.external ? (
             <a
@@ -39,7 +40,7 @@ export default function Sidebar() {
               href={menu.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-3 rounded-lg text-sm font-medium transition text-gray-400 hover:bg-gray-800 hover:text-white"
+              style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: '500', color: '#9CA3AF', textDecoration: 'none' }}
             >
               {menu.label}
             </a>
@@ -47,11 +48,16 @@ export default function Sidebar() {
             <Link
               key={menu.href}
               href={menu.href}
-              className={`block px-4 py-3 rounded-lg text-sm font-medium transition ${
-                pathname === menu.href
-                  ? 'bg-gray-700 text-white'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-              }`}
+              style={{
+                display: 'block',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                textDecoration: 'none',
+                backgroundColor: pathname === menu.href ? '#374151' : 'transparent',
+                color: pathname === menu.href ? 'white' : '#9CA3AF',
+              }}
             >
               {menu.label}
             </Link>
@@ -59,10 +65,10 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-700">
+      <div style={{ padding: '16px', borderTop: '1px solid #374151' }}>
         <button
           onClick={handleLogout}
-          className="w-full px-4 py-3 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition text-left"
+          style={{ width: '100%', padding: '12px 16px', fontSize: '14px', color: '#9CA3AF', backgroundColor: 'transparent', border: 'none', borderRadius: '8px', cursor: 'pointer', textAlign: 'left' }}
         >
           🚪 로그아웃
         </button>
