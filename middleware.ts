@@ -1,20 +1,20 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
-  const { data: { session } } = await supabase.auth.getSession()
 
   const isLoginPage = req.nextUrl.pathname === '/login'
   const isRootPage = req.nextUrl.pathname === '/'
 
-  if (!session && !isLoginPage && !isRootPage) {
+  const token = req.cookies.get('sb-xiteushnuwzzehdfhfex-auth-token')?.value
+
+  if (!token && !isLoginPage && !isRootPage) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  if (session && isLoginPage) {
+  if (token && isLoginPage) {
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
@@ -22,5 +22,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|inventory.html).*)'],
 }
