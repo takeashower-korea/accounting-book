@@ -1,24 +1,23 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-
   const isLoginPage = req.nextUrl.pathname === '/login'
   const isRootPage = req.nextUrl.pathname === '/'
+  const isPublicFile = req.nextUrl.pathname.includes('.')
 
-  const token = req.cookies.get('sb-xiteushnuwzzehdfhfex-auth-token')?.value
+  if (isLoginPage || isRootPage || isPublicFile) {
+    return NextResponse.next()
+  }
 
-  if (!token && !isLoginPage && !isRootPage) {
+  const authCookie = req.cookies.get('sb-access-token') ||
+    req.cookies.getAll().find(c => c.name.includes('auth-token'))
+
+  if (!authCookie) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  if (token && isLoginPage) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
-  }
-
-  return res
+  return NextResponse.next()
 }
 
 export const config = {
